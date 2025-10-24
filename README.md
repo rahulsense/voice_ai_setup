@@ -313,10 +313,7 @@ brew install pytest
 ```
 
 ---
-
 ### Issue: Cannot Connect to MySQL
-
-**Symptom:** Connection refused or timeout errors.
 
 **Solution:**
 
@@ -327,15 +324,42 @@ docker ps
 ```
 
 2. Check if MySQL ports are exposed:
-   - Dev: `3306`
-   - Test: `3501`
+   
+   **Check port exposure:**
+   ```bash
+   # Check if ports are listening
+   lsof -i :3306  # For dev environment
+   lsof -i :3501 # For test environment
+   ```
+   
+   Or using netstat:
+   ```bash
+   netstat -an | grep 3306
+   netstat -an | grep 3501
+   ```
+   
+   **If ports are not exposed:**
+   
+   a. Verify Docker container port mapping:
+   ```bash
+   docker ps --format "table {{.Names}}\t{{.Ports}}"
+   ```
+   
+   b. If port mapping is missing, stop and restart the container with correct ports:
+   ```bash
+   docker stop <container_name>
+   docker rm <container_name>
+   bash ./ops/docker_run.sh chatbot_mysql
+   ```
+   
+   c. Check for port conflicts (another service using the same port):
+   ```bash
+   lsof -i :3501
+   ```
+   
+   If another process is using the port, either:
+   - Stop that process: `kill -9 <PID>`
 
-3. Restart MySQL containers:
-
-```bash
-docker stop <container_id>
-bash ./ops/docker_run.sh chatbot_mysql
-```
 
 ---
 

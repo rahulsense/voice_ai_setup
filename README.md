@@ -1,4 +1,3 @@
-# Repo Set-Up
 ## Table of Contents
 
 - [Prerequisites](#prerequisites)
